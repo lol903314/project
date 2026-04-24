@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ store.name }} - 菜單目錄</title>
+    
+    <style>
+        /* 手機佈局 */
+        body { font-family: "Microsoft JhengHei", sans-serif; margin: 0; padding: 0; background-color: #f5f5f5; display: flex; justify-content: center; }
+        .mobile-container {
+            width: 100%; max-width: 450px; min-height: 100vh;
+            background-color: white; position: relative; padding-bottom: 90px; 
+        }
+
+        /* 1. 店面 Logo 區 */
+        .store-header {
+            width: 100%; height: 180px; background-color: #ddd;
+            overflow: hidden; position: relative;
+        }
+        .store-header img { width: 100%; height: 100%; object-fit: cover; }
+        
+        /* 2. 店面資訊區 */
+        .store-info { padding: 15px 20px; border-bottom: 8px solid #f5f5f5; }
+        .store-info h1 { margin: 0; font-size: 22px; color: #333; }
+        .store-info p { margin: 5px 0; color: #666; font-size: 14px; }
+
+        /* 3. 商品區 (兩格一列) */
+        .product-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr; 
+            gap: 15px; 
+            padding: 15px;
+        }
+
+        .product-card { background-color: white; cursor: pointer; }
+
+        /* 圖片外框 */
+        .product-img-wrapper {
+            width: 100%; aspect-ratio: 1 / 1; 
+            border: 2px solid white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+            box-sizing: border-box; 
+        }
+        .product-img-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+
+        .product-detail { padding: 8px 5px; }
+        .product-name { font-size: 16px; font-weight: bold; color: #333; margin-bottom: 4px; }
+        .product-price { font-size: 14px; color: #ff5722; font-weight: bold; }
+
+        /* 4. 底部固定購物車 */
+        .cart-footer {
+            position: fixed; bottom: 10px; 
+            width: calc(100% - 40px); max-width: 410px; 
+            height: 60px; background-color: #ff5722;
+            border-radius: 12px; display: flex;
+            align-items: center; justify-content: space-between;
+            padding: 0 20px; color: white; font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 100;
+        }
+    </style>
+</head>
+<body>
+    <div class="mobile-container">
+        <div class="store-header">
+        /*店家logo圖*/
+            <img src="{{ url_for('static', filename=store.images.banner) }}">
+        </div>
+
+        <div class="store-info">
+        /* 店家資訊 */
+        /* 抓取module.py/STORE_CONFIG */
+            <h1>{{ store.name }}</h1>
+            <p>⭐ {{ store.rating }} | {{ store.delivery_info }}</p>
+            <p>{{ store.promotion }}</p>
+        </div>
+
+        <div class="product-grid">
+            {% for item in products %}
+            /* 抓取module.py/PRODUCT_LIST */
+            <div class="product-card" onclick="location.href='/product/{{ item.id }}'">
+                <div class="product-img-wrapper">
+                    <img src="{{ url_for('static', filename=item.img) }}">
+                </div>
+                <div class="product-detail">
+                    <div class="product-name">{{ item.name }}</div>
+                    <div class="product-price">${{ item.price }}</div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        /*購物車 請本跟帆從此接入結帳頁面*/
+        <div class="cart-footer">
+            <div>🛒 已購買 0 樣</div>
+            <div>總計：$0</div>
+        </div>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ product.name }} - 詳細資訊</title>
+    <style>
+        /* 手機佈局 */
+        body { font-family: "Microsoft JhengHei", sans-serif; margin: 0; padding: 0; background-color: #f5f5f5; display: flex; justify-content: center; }
+        
+        .mobile-container {
+            width: 100%; max-width: 450px; min-height: 100vh;
+            background-color: white; position: relative; padding-bottom: 80px; 
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+
+        /* 返回鍵 */
+        .back-btn { 
+            position: absolute; top: 15px; left: 15px; 
+            width: 35px; height: 35px;
+            background: rgba(255,255,255,0.8); 
+            border: none; border-radius: 50%; cursor: pointer; z-index: 10;
+            font-size: 18px; font-weight: bold;
+        }
+
+        /* 圖片區 */
+        .image-box { width: 100%; height: 300px; background-color: #eee; overflow: hidden; }
+        .image-box img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* 商品標題與價格區 */
+        .info-header { padding: 20px 20px 10px 20px; }
+        .product-title { margin: 0; font-size: 24px; color: #333; }
+        .product-price { font-size: 22px; color: #ff5722; font-weight: bold; margin-top: 5px; }
+
+        /* 介紹文案 */
+        .description { padding: 0 20px 20px 20px; color: rgba(0, 0, 0, 0.5); font-size: 15px; line-height: 1.5; border-bottom: 8px solid #f5f5f5; }
+
+        /* 選項區 */
+        .option-title { background-color: orange; color: white; padding: 10px 20px; font-weight: bold; font-size: 18px; }
+        .option-item { display: flex; align-items: center; padding: 15px 20px; border-bottom: 1px solid #eee; cursor: pointer; font-size: 16px; }
+        .option-item input { margin-right: 15px; width: 18px; height: 18px; }
+
+        /* 底部固定欄 */
+        .footer-bar { 
+            position: fixed; bottom: 0; width: 100%; max-width: 450px;
+            height: 75px; background: white; border-top: 1px solid #eee; 
+            display: flex; align-items: center; justify-content: space-between; 
+            padding: 0 20px; box-sizing: border-box; 
+        }
+        .total-price-display { font-size: 22px; font-weight: bold; color: #ff5722; }
+        .counter-group { display: flex; align-items: center; gap: 12px; }
+        .btn-adjust { width: 32px; height: 32px; border: 1px solid #ddd; background: #fff; border-radius: 50%; font-size: 20px; cursor: pointer; }
+        .confirm-btn { background-color: #ff5722; color: white; border: none; padding: 12px 20px; border-radius: 25px; font-size: 16px; font-weight: bold; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <div class="mobile-container">
+        /*返回鍵*/
+        <button class="back-btn" onclick="location.href='/catalog'">←</button>
+
+        <div class="image-box">
+        /*圖片*/
+            <img src="{{ url_for('static', filename=product.img) }}" alt="{{ product.name }}">
+        </div>
+
+        <div class="info-header">
+        /*商品名稱 , 價格 , 介紹*/
+            <h1 class="product-title">{{ product.name }}</h1>
+            <div class="product-price" id="unit-price">${{ product.price }}</div>
+        </div>
+        <p class="description">{{ product.desc }}</p>
+
+        <div class="options-container">
+            {% for opt in product.options %}
+            <div class="option-section">
+                <div class="option-title">{{ opt.title }}</div>
+                {% for choice in opt.choices %}
+                <label class="option-item">
+                    <input type="radio" name="{{ opt.name }}" value="{{ choice }}" {% if loop.first %}checked{% endif %}>
+                    <span>{{ choice }}</span>
+                </label>
+                {% endfor %}
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="footer-bar">
+            <div class="counter-group">
+                <button class="btn-adjust" onclick="updateQty(-1)">-</button>
+                <span id="quantity" style="font-size: 18px; font-weight: bold;">1</span>
+                <button class="btn-adjust" onclick="updateQty(1)">+</button>
+            </div>
+            
+            <div class="total-price-display">
+                總計: $<span id="total-price">{{ product.price }}</span>
+            </div>
+
+            <button class="confirm-btn" onclick="submitOrder()">加入</button>
+        </div>
+    </div>
+
+    <script>
+        //加入購物車 請本跟帆在這邊連接購物車
+        let currentQty = 1;
+        // 抓取單價
+        const unitPrice = {{ product.price }};
+
+        function updateQty(change) {
+            currentQty += change;
+            if (currentQty < 1) currentQty = 1;
+            document.getElementById('quantity').innerText = currentQty;
+            document.getElementById('total-price').innerText = currentQty * unitPrice;
+        }
+
+        function submitOrder() {
+            // 抓取所有選中的選項
+            const selectedOptions = [];
+            document.querySelectorAll('input[type="radio"]:checked').forEach(radio => {
+                selectedOptions.push(`${radio.name}: ${radio.value}`);
+            });
+
+            alert(`✅ 已加入購物車！\n餐點：{{ product.name }}\n數量：${currentQty}\n細項：${selectedOptions.join(' / ')}\n總計：$${currentQty * unitPrice}`);
+        }
+    </script>
+</body>
+</html>
