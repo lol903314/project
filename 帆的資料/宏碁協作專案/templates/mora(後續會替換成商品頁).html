@@ -1,0 +1,40 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>猜拳遊戲</title>
+</head>
+   <body>
+       <h1>猜拳遊戲</h1>
+       <p>玩家:{{session['user']}}/<a href='/logout'>登出</a></p>
+       <p>會員資料(如為訪客，點按將跳轉登入):<a href='/profile'>點我</a></p>
+       
+       <form action ="/mora" method = "post">
+           <button type="submit" name="choice" value="paper">
+               <img src="{{url_for('static',filename='paper.png')}}" width="100">
+           </button>
+           <button type="submit" name="choice" value="scissors">
+               <img src="{{url_for('static',filename='scissors.png')}}" width="100">
+           </button>
+           <button type="submit" name="choice" value="stone">
+               <img src="{{url_for('static',filename='stone.png')}}" width="100">
+           </button>
+       </form>
+       
+       {% if result %}
+           <h2>你的結果:{{you}}</h2>
+               <img src="{{url_for('static',filename=you+'.png')}}" width="100">
+           <h2>電腦的結果:{{computer}}</h2>
+               <img src="{{url_for('static',filename=computer+'.png')}}" width="100">
+           <h2>結果:{{result}}</h2>
+           <h2>目前猜贏次數:{{win}}</h2>
+           <h2>目前猜輸次數:{{lose}}</h2>
+           <h2>目前平手次數:{{tie}}</h2>
+           <h1><a href='/reset'>重置次數</a></h1>
+       {% endif %}
+       
+       {% if msg %}
+       <script>alert({{msg|tojson}});</script>
+       {% endif %}
+       
+   </body>
+</html>
