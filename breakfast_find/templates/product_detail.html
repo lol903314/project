@@ -1,0 +1,344 @@
+<!DOCTYPE html> <!-- 告訴瀏覽器這是一份 HTML5 文件 -->
+<html lang="zh-Hant"> <!-- 設定頁面語言為繁體中文 -->
+<head> <!-- head 區塊開始 -->
+    <meta charset="UTF-8"> <!-- 設定文字編碼，避免中文亂碼 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- 讓手機畫面可以正常縮放 -->
+    <title>{{ product.name }}</title> <!-- 使用商品名稱當作瀏覽器分頁標題 -->
+    <style> /* CSS 區塊開始 */
+        body { /* 設定整個頁面的基本樣式 */
+            font-family: Arial, "Microsoft JhengHei", sans-serif; /* 設定中文字體與備用字體 */
+            background-color: #f5f5f5; /* 套用 breakoder 詳情頁的淺灰背景 */
+            margin: 0; /* 清除瀏覽器預設外距 */
+            padding: 0; /* 清除瀏覽器預設內距 */
+            display: flex; /* 使用 flex 讓手機容器可以置中 */
+            justify-content: center; /* 讓手機容器水平置中 */
+        } /* body 樣式結束 */
+
+        .mobile-container { /* 設定手機版主要容器 */
+            width: 100%; /* 小螢幕時寬度撐滿 */
+            max-width: 450px; /* 大螢幕時限制成手機寬度 */
+            min-height: 100vh; /* 讓容器至少等於整個螢幕高度 */
+            background-color: #ffffff; /* 容器背景設成白色 */
+            position: relative; /* 讓返回按鈕可以用絕對定位 */
+            padding-bottom: 96px; /* 預留底部加入購物車列的高度 */
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); /* 套用 breakoder 的容器陰影 */
+        } /* mobile-container 樣式結束 */
+
+        .back-btn { /* 設定左上角返回按鈕 */
+            position: absolute; /* 讓按鈕固定在圖片左上角 */
+            top: 15px; /* 按鈕距離上方 15px */
+            left: 15px; /* 按鈕距離左側 15px */
+            width: 35px; /* 設定按鈕寬度 */
+            height: 35px; /* 設定按鈕高度 */
+            border: none; /* 移除按鈕邊框 */
+            border-radius: 50%; /* 把按鈕做成圓形 */
+            background-color: rgba(255, 255, 255, 0.8); /* 使用半透明白色背景 */
+            color: #333333; /* 設定返回符號顏色 */
+            font-size: 18px; /* 設定返回符號大小 */
+            font-weight: bold; /* 讓返回圖示更醒目 */
+            cursor: pointer; /* 滑鼠移上去顯示手指 */
+            z-index: 10; /* 讓返回按鈕蓋在圖片上方 */
+        } /* back-btn 樣式結束 */
+
+        .image-box { /* 設定商品圖片外框 */
+            width: 100%; /* 圖片外框寬度撐滿容器 */
+            height: 300px; /* 套用 breakoder 的圖片高度 */
+            overflow: hidden; /* 超出外框的圖片部分隱藏 */
+            background-color: #eeeeee; /* 圖片還沒載入時的底色 */
+        } /* image-box 樣式結束 */
+
+        .image-box img { /* 設定商品圖片本身 */
+            width: 100%; /* 圖片寬度撐滿外框 */
+            height: 100%; /* 圖片高度撐滿外框 */
+            object-fit: cover; /* 圖片裁切填滿，不讓比例變形 */
+            display: block; /* 清除圖片底部預設空隙 */
+        } /* image-box img 樣式結束 */
+
+        .info-header { /* 設定商品標題與價格區 */
+            padding: 20px 20px 10px 20px; /* 套用 breakoder 的標題區留白 */
+        } /* info-header 樣式結束 */
+
+        .product-title { /* 設定商品名稱標題 */
+            margin: 0; /* 清除標題外距 */
+            font-size: 24px; /* 設定商品名稱大小 */
+            color: #333333; /* 商品名稱使用深灰色 */
+            line-height: 1.3; /* 讓長標題保持可讀性 */
+        } /* product-title 樣式結束 */
+
+        .product-price { /* 設定商品價格樣式 */
+            font-size: 22px; /* 套用 breakoder 的價格尺寸 */
+            color: #ff5722; /* 使用 breakoder 的橘色價格 */
+            font-weight: bold; /* 價格加粗 */
+            margin-top: 6px; /* 和標題保持距離 */
+        } /* product-price 樣式結束 */
+
+        .description { /* 設定商品說明文字 */
+            padding: 0 20px 20px 20px; /* 套用 breakoder 的說明區內距 */
+            color: rgba(0, 0, 0, 0.5); /* 使用較淡的說明文字色 */
+            font-size: 15px; /* 設定描述文字大小 */
+            line-height: 1.5; /* 設定描述文字行高 */
+            border-bottom: 8px solid #f5f5f5; /* 下方加上淡灰分隔 */
+        } /* description 樣式結束 */
+
+        .description p { /* 設定說明文字段落 */
+            margin: 0; /* 清除段落預設外距 */
+        } /* description p 樣式結束 */
+
+        .options-container { /* 設定整個選項區容器 */
+            background-color: #ffffff; /* 選項區維持白底 */
+        } /* options-container 樣式結束 */
+
+        .option-section { /* 設定單一選項群組區塊 */
+            margin-bottom: 10px; /* 每個群組下方留距離 */
+        } /* option-section 樣式結束 */
+
+        .option-title { /* 設定選項群組標題 */
+            background-color: #ff9800; /* 套用 breakoder 的橘色標題底 */
+            color: #ffffff; /* 標題文字使用白色 */
+            padding: 10px 20px; /* 設定標題內距 */
+            font-weight: bold; /* 選項標題加粗 */
+            font-size: 18px; /* 設定選項標題大小 */
+        } /* option-title 樣式結束 */
+
+        .option-item { /* 設定每一個選項列 */
+            display: flex; /* 使用 flex 讓 radio 和文字排在同一行 */
+            align-items: center; /* 讓 radio 和文字垂直置中 */
+            gap: 10px; /* radio 和文字中間留距離 */
+            padding: 15px 20px; /* 套用 breakoder 的選項列留白 */
+            color: #444444; /* 設定選項文字顏色 */
+            font-size: 16px; /* 設定選項文字大小 */
+            border-bottom: 1px solid #eeeeee; /* 每個選項下方加淡淡分隔線 */
+            cursor: pointer; /* 滑鼠移上去顯示手指 */
+        } /* option-item 樣式結束 */
+
+        .option-item input { /* 設定 radio 按鈕 */
+            width: 18px; /* 設定 radio 寬度 */
+            height: 18px; /* 設定 radio 高度 */
+            margin: 0 5px 0 0; /* 調整按鈕右側留白 */
+            cursor: pointer; /* 滑鼠移到 radio 上顯示手指 */
+        } /* option-item input 樣式結束 */
+
+        .option-price { /* 設定選項加價文字 */
+            color: #ff5722; /* 加價文字改為橘色系 */
+            font-size: 14px; /* 加價文字稍微小一點 */
+            margin-left: auto; /* 把加價文字推到最右邊 */
+            font-weight: bold; /* 加價文字加粗 */
+        } /* option-price 樣式結束 */
+
+        .footer-bar { /* 設定底部加入購物車列 */
+            position: fixed; /* 讓底部列固定在視窗底部 */
+            left: 50%; /* 先把左側放到畫面中間 */
+            bottom: 0; /* 讓底部列貼齊視窗底部 */
+            transform: translateX(-50%); /* 把底部列往左拉回自身一半寬度 */
+            width: 100%; /* 小螢幕時寬度撐滿 */
+            max-width: 450px; /* 大螢幕時限制成手機寬度 */
+            height: 75px; /* 套用 breakoder 的底部欄高度 */
+            box-sizing: border-box; /* 讓 padding 不會把寬度撐爆 */
+            background-color: #ffffff; /* 底部列背景設白色 */
+            border-top: 1px solid #eeeeee; /* 底部列上方加分隔線 */
+            padding: 0 20px; /* 套用 breakoder 的左右留白 */
+            display: flex; /* 使用 flex 排列價格與按鈕 */
+            align-items: center; /* 讓底部內容垂直置中 */
+            justify-content: space-between; /* 讓內容左右分開 */
+            gap: 12px; /* 左右區塊中間留距離 */
+        } /* footer-bar 樣式結束 */
+
+        .price-section { /* 設定價格顯示區 */
+            font-size: 22px; /* 套用 breakoder 的價格大小 */
+            font-weight: bold; /* 價格文字加粗 */
+            color: #ff5722; /* 使用 breakoder 的橘色 */
+            white-space: nowrap; /* 避免價格被換行 */
+        } /* price-section 樣式結束 */
+
+        .counter-group { /* 設定數量與按鈕群組 */
+            display: flex; /* 使用 flex 排列數量按鈕 */
+            align-items: center; /* 讓按鈕垂直置中 */
+            gap: 12px; /* 套用 breakoder 的按鈕間距 */
+        } /* counter-group 樣式結束 */
+
+        .btn-adjust { /* 設定數量加減按鈕 */
+            width: 32px; /* 套用 breakoder 的按鈕寬度 */
+            height: 32px; /* 套用 breakoder 的按鈕高度 */
+            border: 1px solid #dddddd; /* 設定按鈕邊框 */
+            border-radius: 50%; /* 把按鈕做成圓形 */
+            background-color: #ffffff; /* 按鈕背景設白色 */
+            color: #333333; /* 按鈕文字使用深灰色 */
+            font-size: 20px; /* 設定加減符號大小 */
+            cursor: pointer; /* 滑鼠移上去顯示手指 */
+            line-height: 30px; /* 讓符號比較接近垂直置中 */
+        } /* btn-adjust 樣式結束 */
+
+        #quantity { /* 設定數量文字 */
+            min-width: 22px; /* 給數量文字固定最小寬度 */
+            text-align: center; /* 數量文字置中 */
+            font-size: 18px; /* 套用較大的數量文字 */
+            font-weight: bold; /* 數量文字加粗 */
+            color: #333333; /* 數量文字使用深灰色 */
+        } /* quantity 樣式結束 */
+
+        .confirm-btn { /* 設定加入購物車按鈕 */
+            border: none; /* 移除按鈕邊框 */
+            border-radius: 25px; /* 套用 breakoder 的膠囊按鈕 */
+            background-color: #ff5722; /* 使用 breakoder 的橘色按鈕 */
+            color: #ffffff; /* 按鈕文字使用白色 */
+            padding: 12px 20px; /* 設定按鈕內距 */
+            font-size: 16px; /* 設定按鈕文字大小 */
+            font-weight: bold; /* 按鈕文字加粗 */
+            cursor: pointer; /* 滑鼠移上去顯示手指 */
+            white-space: nowrap; /* 避免按鈕文字換行 */
+        } /* confirm-btn 樣式結束 */
+    </style> <!-- CSS 區塊結束 -->
+</head> <!-- head 區塊結束 -->
+<body> <!-- body 區塊開始 -->
+    <div class="mobile-container"> <!-- 手機版主要容器開始 -->
+        <button class="back-btn" type="button" onclick="goBack()">〈</button> <!-- 左上角返回按鈕 -->
+        <input type="hidden" id="product-id" value="{{ product.id }}"> <!-- 隱藏商品 id，送後端時計價用 -->
+        <input type="hidden" id="base-price" value="{{ product.base_price }}"> <!-- 隱藏基本價格，只給前端畫面預估用 -->
+
+        <div class="image-box"> <!-- 商品圖片區開始 -->
+            <img src="{{ url_for('static', filename='images/' ~ product.image_filename) }}" alt="{{ product.name }}" onerror="this.src='{{ url_for('static', filename='images/default.jpg') }}'"> <!-- 顯示商品圖片，圖片失敗時改用預設圖 -->
+        </div> <!-- 商品圖片區結束 -->
+
+        <div class="info-header"> <!-- 商品標題與價格區開始 -->
+            <h1 class="product-title" id="food-name">{{ product.name }}</h1> <!-- 顯示商品名稱 -->
+            <div class="product-price">基本價格：$<span id="unit-price">{{ product.base_price }}</span></div> <!-- 顯示商品基本價格 -->
+        </div> <!-- 商品標題與價格區結束 -->
+
+        <div class="description"> <!-- 商品說明區開始 -->
+            <p id="food-desc">{{ product.description }}</p> <!-- 顯示商品描述 -->
+        </div> <!-- 商品說明區結束 -->
+
+        <div class="options-container"> <!-- 選項區容器開始 -->
+        {% for group in option_groups %} <!-- 逐一產生每一個選項群組 -->
+        {% set group_index = loop.index0 %} <!-- 保存外層群組序號，讓 radio name 可以正確分組 -->
+        <div class="option-section"> <!-- 單一選項群組開始 -->
+        <div class="option-title">{{ group.group_name }}</div> <!-- 顯示選項群組標題 -->
+            {% for option in group.options %} <!-- 逐一產生群組裡面的每個選項 -->
+            <label class="option-item"> <!-- 單一選項列開始 -->
+                <input class="option-radio" type="radio" name="option_group_{{ group_index }}" value="{{ option.id }}" data-extra="{{ option.extra_price }}" data-group="{{ group.group_name }}" data-name="{{ option.option_name }}" onchange="updatePricePreview()" {% if loop.first %}checked{% endif %}> <!-- 選項 radio 按鈕 -->
+                <span>{{ option.option_name }}</span> <!-- 顯示選項名稱 -->
+                {% if option.extra_price > 0 %} <!-- 如果這個選項需要加價 -->
+                <span class="option-price">+${{ option.extra_price }}</span> <!-- 顯示加價金額 -->
+                {% endif %} <!-- 加價判斷結束 -->
+            </label> <!-- 單一選項列結束 -->
+            {% endfor %} <!-- 選項迴圈結束 -->
+        </div> <!-- 單一選項群組結束 -->
+        {% endfor %} <!-- 選項群組迴圈結束 -->
+        </div> <!-- 選項區容器結束 -->
+
+        <div class="footer-bar"> <!-- 底部加入購物車列開始 -->
+            <div class="price-section">總計: $<span id="total-price">{{ product.base_price }}</span></div> <!-- 顯示目前小計金額 -->
+            <div class="counter-group"> <!-- 數量與加入購物車按鈕群組開始 -->
+                <button class="btn-adjust" type="button" onclick="updateQty(-1)">-</button> <!-- 數量減一按鈕 -->
+                <span id="quantity">1</span> <!-- 顯示目前數量 -->
+                <button class="btn-adjust" type="button" onclick="updateQty(1)">+</button> <!-- 數量加一按鈕 -->
+                <button class="confirm-btn" type="button" onclick="submitOrder()">加入</button> <!-- 加入購物車按鈕 -->
+            </div> <!-- 數量與加入購物車按鈕群組結束 -->
+        </div> <!-- 底部加入購物車列結束 -->
+    </div> <!-- 手機版主要容器結束 -->
+
+    <script> // JavaScript 區塊開始
+        let currentQty = 1; // 記錄目前使用者選擇的數量
+        const maxQty = 99; // 設定一次最多加入購物車的數量
+        const productName = {{ product.name|tojson }}; // 把後端商品名稱安全轉成 JavaScript 字串
+        const basePrice = parseInt(document.getElementById("base-price").value); // 讀取後端傳來的商品基本價格
+
+        function goBack() { // 這個函式負責返回上一頁
+            if (document.referrer) { // 如果瀏覽器有上一頁紀錄
+                history.back(); // 回到上一頁
+            } else { // 如果沒有上一頁紀錄
+                window.location.href = "/product"; // 就回到商品列表頁
+            } // 上一頁判斷結束
+        } // goBack 函式結束
+
+        function getCartCode() { // 這個函式負責取得目前瀏覽器的購物車代號
+            let cartCode = localStorage.getItem("cart_code"); // 從 localStorage 讀取 cart_code
+            if (!cartCode) { // 如果目前還沒有 cart_code
+                cartCode = "cart_" + new Date().getTime(); // 使用目前時間建立一個簡單購物車代號
+                localStorage.setItem("cart_code", cartCode); // 把新的 cart_code 存進 localStorage
+            } // cart_code 判斷結束
+            return cartCode; // 回傳購物車代號
+        } // getCartCode 函式結束
+
+        function getSelectedOptionRadios() { // 這個函式負責取得目前被選中的 radio 選項
+            return document.querySelectorAll(".option-radio:checked"); // 回傳所有已勾選的選項 radio
+        } // getSelectedOptionRadios 函式結束
+
+        function getSelectedOptionIds() { // 這個函式負責收集目前選到的選項 id
+            let radios = getSelectedOptionRadios(); // 先取得所有已勾選的選項 radio
+            let optionIds = []; // 準備一個陣列放選項 id
+            for (let i = 0; i < radios.length; i++) { // 逐一讀取每個已勾選的 radio
+                optionIds.push(parseInt(radios[i].value)); // 把 radio 的 value 轉成整數後放進陣列
+            } // 選項 id 收集迴圈結束
+            return optionIds; // 回傳選項 id 陣列
+        } // getSelectedOptionIds 函式結束
+
+        function getSelectedOptionText() { // 這個函式負責整理畫面上選中的選項文字
+            let radios = getSelectedOptionRadios(); // 先取得所有已勾選的選項 radio
+            let texts = []; // 準備一個陣列放選項文字
+            for (let i = 0; i < radios.length; i++) { // 逐一讀取每個已勾選的 radio
+                texts.push(radios[i].dataset.group + "：" + radios[i].dataset.name); // 把群組名稱和選項名稱組成文字
+            } // 選項文字收集迴圈結束
+            return texts.join("、"); // 把所有選項文字合併成一段文字
+        } // getSelectedOptionText 函式結束
+
+        function getSelectedExtraPrice() { // 這個函式負責計算目前選項加價總額
+            let radios = getSelectedOptionRadios(); // 先取得所有已勾選的選項 radio
+            let total = 0; // 先把選項加價總額設成 0
+            for (let i = 0; i < radios.length; i++) { // 逐一處理每個已勾選的 radio
+                total = total + parseInt(radios[i].dataset.extra || "0"); // 把每個選項的加價加進總額
+            } // 選項加價迴圈結束
+            return total; // 回傳選項加價總額
+        } // getSelectedExtraPrice 函式結束
+
+        function getUnitPrice() { // 這個函式負責計算畫面上的預估單價
+            return basePrice + getSelectedExtraPrice(); // 基本價格加上選項加價就是預估單價
+        } // getUnitPrice 函式結束
+
+        function updatePricePreview() { // 這個函式負責更新底部價格顯示
+            let totalPrice = getUnitPrice() * currentQty; // 用預估單價乘以數量得到小計
+            document.getElementById("total-price").innerText = totalPrice; // 把小計顯示在底部價格區
+        } // updatePricePreview 函式結束
+
+        function updateQty(change) { // 這個函式負責調整數量
+            currentQty = currentQty + change; // 先依照傳入的變化量調整數量
+            if (currentQty < 1) { // 如果數量小於 1
+                currentQty = 1; // 就把數量改回 1
+            } // 最小數量判斷結束
+            if (currentQty > maxQty) { // 如果數量超過上限
+                currentQty = maxQty; // 就把數量限制在上限
+            } // 最大數量判斷結束
+            document.getElementById("quantity").innerText = currentQty; // 更新畫面上的數量文字
+            updatePricePreview(); // 數量改變後重新計算底部價格
+        } // updateQty 函式結束
+
+        async function submitOrder() { // 這個函式負責把目前商品加入購物車
+            let productId = parseInt(document.getElementById("product-id").value); // 讀取商品 id
+            let sendData = {}; // 準備要送給後端的資料物件
+            sendData.cart_code = getCartCode(); // 放入目前瀏覽器的購物車代號
+            sendData.product_id = productId; // 放入商品 id，實際價格由後端查資料庫決定
+            sendData.quantity = currentQty; // 放入目前選擇的數量
+            sendData.option_ids = getSelectedOptionIds(); // 放入目前選到的選項 id 陣列
+            try { // 開始嘗試呼叫後端 API
+                let response = await fetch("/add_to_cart", { // 呼叫加入購物車 API
+                    method: "POST", // 使用 POST 方法送資料
+                    headers: { "Content-Type": "application/json" }, // 告訴後端這次送的是 JSON
+                    body: JSON.stringify(sendData) // 把資料物件轉成 JSON 字串送出
+                }); // fetch 呼叫結束
+                let result = await response.json(); // 把後端回應轉成 JSON 物件
+                if (result.success) { // 如果後端成功加入購物車
+                    alert("已加入購物車！\n餐點：" + productName + "\n數量：" + currentQty + "\n客製化：" + getSelectedOptionText() + "\n總計：$" + (getUnitPrice() * currentQty)); // 顯示成功訊息
+                    window.location.href = "/cart"; // 加入成功後跳到購物車頁
+                } else { // 如果後端回傳失敗
+                    alert("加入失敗：" + result.message); // 顯示後端錯誤原因
+                } // 成功失敗判斷結束
+            } catch (error) { // 如果網路或後端連線出錯
+                alert("加入購物車失敗，請確認 Flask 是否有啟動"); // 顯示連線錯誤提示
+                console.log(error); // 把詳細錯誤印到 console 方便除錯
+            } // try catch 結束
+        } // submitOrder 函式結束
+
+        updatePricePreview(); // 頁面載入後先計算一次底部價格
+    </script> <!-- JavaScript 區塊結束 -->
+</body> <!-- body 區塊結束 -->
+</html> <!-- HTML 文件結束 -->
