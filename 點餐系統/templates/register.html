@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>註冊</title>
+  <style>
+body {
+    font-family: "Microsoft JhengHei", sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f5f5f5;
+    display: flex;
+    justify-content: center;
+}
+
+/* 手機框 */
+.mobile-container {
+    width: 100%;
+    max-width: 450px;
+    min-height: 100vh;
+    background-color: white;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+}
+
+/* 上方圖片 */
+.image-box {
+    width: 100%;
+    height: 250px;
+    overflow: hidden;
+}
+.image-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* 標題 */
+.header {
+    text-align: center;
+    padding: 15px;
+}
+.header h1 {
+    margin: 5px 0;
+}
+
+/* 表單 */
+.form-box {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* 表單 */
+.form-box form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;  /* 水平置中 */
+}
+
+/* 輸入框 */
+.form-box input {
+    width: 80%;
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+}
+
+/* 按鈕 */
+.submit-btn {
+    width: 80%;
+    background-color: #ff5722;
+    color: white;
+    border: none;
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 25px;
+    cursor: pointer;
+}
+
+/* 連結 */
+.link-box {
+    text-align: center;
+    margin-top: 10px;
+}
+.link-box a {
+    color: #2196F3;
+    text-decoration: none;
+}
+  </style>
+</head>
+
+<body>
+
+  <div class="mobile-container">
+	<div class="image-box">
+	  <img src="{{url_for('static',filename='store_logo.jpg')}}">
+	</div>
+	<div class="header">
+	  <h1>註冊</h1>
+	  <h1>-----------------</h1>
+	  <h2 style="color:red;">告知:帳號為獨一欄位，創立即無法修改</h2>
+	</div>
+	<div class="form-box">
+      <form action="/register" method="POST">
+        <!-- 加required強制輸入 -->
+		<input type="text" placeholder="帳號" name="user" required><br>
+		<input type="password" placeholder="密碼" name="password" required><br>
+		<input type="text" placeholder="姓名" name="name" required><br>
+		<input type="text" placeholder="Email" name="email" required><br>
+		<button type="submit" class="submit-btn">註冊</button>
+      </form>
+      <div class="link-box">
+        <p>已有帳號?<a href='/login'>登入</a></p>
+        <p>返回首頁<a href='/'>點我</a></p>
+      </div>
+    </div>          
+  </div>
+  
+  {% if msg %}
+  <script>alert({{msg|tojson}});</script>
+  {% endif %}
+  <script>
+    document.getElementById('registerForm').addEventListener('submit', function(e){
+        e.preventDefault();
+    
+        const user = document.querySelector('input[name="user"]').value;
+    
+        fetch('/check_user',{
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({user:user})
+        })
+        .then(res=>res.json())
+        .then(data=>{
+            if(data.exists){
+                alert("帳號已存在");
+            }else{
+                e.target.submit();
+            }
+        });
+    });
+  </script>
+  
+</body>
+
+</html>

@@ -1,0 +1,247 @@
+<!DOCTYPE html> <!-- 告訴瀏覽器這是一份 HTML5 文件 -->
+<html lang="zh-Hant"> <!-- 設定頁面語言為繁體中文 -->
+<head> <!-- head 區塊開始 -->
+    <meta charset="UTF-8"> <!-- 設定文字編碼，避免中文亂碼 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- 讓手機畫面可以正常縮放 -->
+    <title>商品列表</title> <!-- 設定瀏覽器分頁標題 -->
+    <style> /* CSS 區塊開始 */
+        body { /* 設定整體頁面背景與置中排版 */
+            margin: 0; /* 清除瀏覽器預設外距 */
+            padding: 0; /* 清除瀏覽器預設內距 */
+            font-family: Arial, "Microsoft JhengHei", sans-serif; /* 設定中文字體與備用字體 */
+            background-color: #f5f5f5; /* 使用 breakoder 風格的淺灰背景 */
+            display: flex; /* 讓主容器可以置中 */
+            justify-content: center; /* 讓主容器水平置中 */
+        } /* body 樣式結束 */
+        .mobile-container { /* 設定手機版主要容器 */
+            width: 100%; /* 小螢幕時寬度撐滿 */
+            max-width: 450px; /* 大螢幕時維持手機寬度 */
+            min-height: 100vh; /* 容器至少和視窗一樣高 */
+            background-color: #ffffff; /* 容器背景設為白色 */
+            position: relative; /* 讓底部區塊定位穩定 */
+            padding-bottom: 96px; /* 預留底部按鈕空間 */
+            box-shadow: 0 0 18px rgba(0, 0, 0, 0.08); /* 加上淡淡陰影 */
+        } /* mobile-container 樣式結束 */
+        .store-header { /* 設定上方品牌視覺區 */
+            width: 100%; /* 橫幅寬度撐滿容器 */
+            height: 180px; /* 設定橫幅高度 */
+            background: linear-gradient(135deg, #ffe0b2, #ffcc80 55%, #ffb74d); /* 用暖色漸層取代 breakoder 的店面圖 */
+            position: relative; /* 讓內部文字可定位 */
+            overflow: hidden; /* 避免裝飾元素超出 */
+        } /* store-header 樣式結束 */
+        .store-header::before { /* 設定背景裝飾圓形 */
+            content: ""; /* 建立裝飾元素 */
+            position: absolute; /* 使用絕對定位放裝飾 */
+            width: 220px; /* 裝飾圓形寬度 */
+            height: 220px; /* 裝飾圓形高度 */
+            border-radius: 50%; /* 讓裝飾變成圓形 */
+            background-color: rgba(255, 255, 255, 0.18); /* 設定半透明白色 */
+            top: -70px; /* 往上偏移 */
+            right: -60px; /* 往右偏移 */
+        } /* store-header::before 樣式結束 */
+        .store-header::after { /* 設定第二個背景裝飾圓形 */
+            content: ""; /* 建立第二個裝飾元素 */
+            position: absolute; /* 使用絕對定位 */
+            width: 150px; /* 第二個圓形寬度 */
+            height: 150px; /* 第二個圓形高度 */
+            border-radius: 50%; /* 讓裝飾變成圓形 */
+            background-color: rgba(255, 255, 255, 0.14); /* 設定更淡的白色 */
+            bottom: -55px; /* 往下偏移 */
+            left: -35px; /* 往左偏移 */
+        } /* store-header::after 樣式結束 */
+        .store-overlay { /* 設定橫幅上的文字內容區 */
+            position: absolute; /* 放在橫幅上層 */
+            left: 20px; /* 文字內容距離左側 20px */
+            right: 20px; /* 文字內容距離右側 20px */
+            bottom: 20px; /* 文字內容貼近底部 */
+            color: #4e342e; /* 使用深咖啡色文字 */
+        } /* store-overlay 樣式結束 */
+        .store-badge { /* 設定小標籤外觀 */
+            display: inline-block; /* 讓標籤依內容寬度顯示 */
+            padding: 6px 10px; /* 設定標籤內距 */
+            border-radius: 999px; /* 做成膠囊形 */
+            background-color: rgba(255, 255, 255, 0.72); /* 設定半透明白底 */
+            font-size: 30px; /* 設定標籤字體大小 */
+            font-weight: bold; /* 標籤文字加粗 */
+            margin-bottom: 10px; /* 標籤下方留距離 */
+        } /* store-badge 樣式結束 */
+        .store-title { /* 設定店面主標題 */
+            margin: 0; /* 清除標題預設外距 */
+            font-size: 26px; /* 放大標題文字 */
+            font-weight: bold; /* 標題加粗 */
+        } /* store-title 樣式結束 */
+        .store-subtitle { /* 設定副標題文字 */
+            margin-top: 8px; /* 和主標題保持距離 */
+            color: #6d4c41; /* 使用較淡的咖啡色 */
+            font-size: 14px; /* 設定副標字體大小 */
+            line-height: 1.6; /* 提升可讀性 */
+        } /* store-subtitle 樣式結束 */
+        .store-info { /* 設定說明文字區 */
+            padding: 16px 20px 14px 20px; /* 設定內距 */
+            border-bottom: 8px solid #f5f5f5; /* 底部加淡灰分隔帶 */
+        } /* store-info 樣式結束 */
+        .store-info p { /* 設定說明區文字 */
+            margin: 0; /* 清除段落預設外距 */
+            color: #666666; /* 使用灰色說明文字 */
+            font-size: 14px; /* 設定字體大小 */
+            line-height: 1.7; /* 提高說明區可讀性 */
+        } /* store-info p 樣式結束 */
+        .product-grid { /* 設定商品卡片區使用兩欄排列 */
+            display: grid; /* 使用 grid 版面 */
+            grid-template-columns: 1fr 1fr; /* 一列顯示兩張商品卡片 */
+            gap: 15px; /* 卡片間距使用 15px */
+            padding: 15px; /* 商品區四周內距 */
+        } /* product-grid 樣式結束 */
+        .product-card { /* 設定單一商品卡片 */
+            background-color: #ffffff; /* 卡片背景維持白色 */
+            cursor: pointer; /* 滑鼠移上去顯示可點擊 */
+        } /* product-card 樣式結束 */
+        .product-img-wrapper { /* 設定商品圖片外框 */
+            width: 100%; /* 圖片外框寬度撐滿 */
+            aspect-ratio: 1 / 1; /* 維持正方形圖片比例 */
+            border: 2px solid #ffffff; /* 保留 breakoder 的白色邊框 */
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* 設定卡片圖片陰影 */
+            border-radius: 8px; /* 設定圓角 */
+            overflow: hidden; /* 超出外框的圖片部分隱藏 */
+            box-sizing: border-box; /* 避免邊框撐大尺寸 */
+            background-color: #f3ede6; /* 圖片尚未載入時顯示底色 */
+        } /* product-img-wrapper 樣式結束 */
+        .product-img-wrapper img { /* 設定商品圖片本身 */
+            width: 100%; /* 圖片寬度撐滿 */
+            height: 100%; /* 圖片高度撐滿 */
+            object-fit: cover; /* 讓圖片裁切填滿 */
+            display: block; /* 避免圖片下方多餘空隙 */
+        } /* product-img-wrapper img 樣式結束 */
+        .product-detail { /* 設定商品文字資訊區 */
+            padding: 8px 5px; /* 讓文字區有適當留白 */
+        } /* product-detail 樣式結束 */
+        .product-name { /* 設定商品名稱樣式 */
+            font-size: 16px; /* 商品名稱字體大小 */
+            font-weight: bold; /* 商品名稱加粗 */
+            color: #333333; /* 商品名稱使用深灰色 */
+            margin-bottom: 4px; /* 名稱下方留一點距離 */
+            line-height: 1.4; /* 避免長名稱擠在一起 */
+        } /* product-name 樣式結束 */
+        .product-desc { /* 設定商品描述樣式 */
+            color: #777777; /* 商品描述使用灰色 */
+            font-size: 13px; /* 商品描述字體稍小 */
+            line-height: 1.5; /* 提高描述可讀性 */
+            min-height: 38px; /* 給固定高度讓卡片較整齊 */
+            margin-bottom: 6px; /* 描述下方留距離 */
+        } /* product-desc 樣式結束 */
+        .product-price { /* 設定商品價格文字 */
+            font-size: 14px; /* 設定價格字體大小 */
+            color: #ff5722; /* 使用 breakoder 橘色系價格色 */
+            font-weight: bold; /* 價格加粗 */
+        } /* product-price 樣式結束 */
+        .footer-actions { /* 設定底部固定操作列 */
+            position: fixed; /* 固定在視窗底部 */
+            left: 50%; /* 先把左邊對齊視窗中線 */
+            bottom: 10px; /* 距離底部 10px */
+            transform: translateX(-50%); /* 往左拉回一半寬度 */
+            width: calc(100% - 40px); /* 小螢幕保留左右邊距 */
+            max-width: 410px; /* 對齊手機版容器寬度 */
+            min-height: 60px; /* 設定最小高度 */
+            background-color: #ff5722; /* 使用 breakoder 橘色底 */
+            border-radius: 12px; /* 做成圓角底部列 */
+            display: flex; /* 使用 flex 排版 */
+            align-items: center; /* 垂直置中 */
+            justify-content: space-between; /* 左右內容分開 */
+            gap: 10px; /* 兩組按鈕之間保留距離 */
+            padding: 0 14px; /* 左右內距 */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* 設定陰影 */
+            box-sizing: border-box; /* 避免 padding 撐開寬度 */
+            z-index: 100; /* 確保底部列蓋在頁面上方 */
+        } /* footer-actions 樣式結束 */
+        .footer-text { /* 設定底部說明文字 */
+            color: #ffffff; /* 使用白色文字 */
+            font-size: 13px; /* 設定較小字體 */
+            font-weight: bold; /* 文字加粗 */
+            line-height: 1.4; /* 讓兩行文字好閱讀 */
+        } /* footer-text 樣式結束 */
+        .footer-btn-group { /* 設定底部按鈕群組 */
+            display: flex; /* 使用 flex 排列按鈕 */
+            gap: 8px; /* 按鈕之間留距離 */
+        } /* footer-btn-group 樣式結束 */
+        .footer-btn { /* 設定底部共用按鈕樣式 */
+            border: none; /* 移除按鈕邊框 */
+            border-radius: 999px; /* 做成膠囊按鈕 */
+            padding: 10px 12px; /* 設定按鈕內距 */
+            font-size: 13px; /* 設定按鈕文字大小 */
+            font-weight: bold; /* 按鈕文字加粗 */
+            cursor: pointer; /* 滑鼠移上去顯示手指 */
+        } /* footer-btn 樣式結束 */
+        .cart-btn { /* 設定購物車按鈕樣式 */
+            background-color: #ffffff; /* 購物車按鈕用白底 */
+            color: #ff5722; /* 購物車按鈕文字用橘色 */
+        } /* cart-btn 樣式結束 */
+        .orders-btn { /* 設定訂單查詢按鈕樣式 */
+            background-color: rgba(255, 255, 255, 0.2); /* 訂單按鈕使用半透明白底 */
+            color: #ffffff; /* 文字維持白色 */
+            border: 1px solid rgba(255, 255, 255, 0.35); /* 加上細邊框增加層次 */
+        } /* orders-btn 樣式結束 */
+    </style> <!-- CSS 區塊結束 -->
+</head> <!-- head 區塊結束 -->
+<body> <!-- body 區塊開始 -->
+    <div class="mobile-container"> <!-- 手機版主要容器開始 -->
+        <div class="store-header"> <!-- 頁面上方視覺區開始 -->
+            <div class="store-overlay"> <!-- 視覺區文字內容開始 -->
+                <div class="store-badge">歡迎來到二組熱炒</div> <!-- 顯示系統標籤 -->
+                <h1 class="store-title">熱炒商品列表</h1> <!-- 顯示頁面主標題 -->
+                <div class="store-subtitle">精選熱炒菜色，點選卡片可查看商品詳情並加入購物車。</div> <!-- 顯示頁面副標題 -->    
+            </div> <!-- 視覺區文字內容結束 -->
+        </div> <!-- 頁面上方視覺區結束 -->
+        <div class="store-info"> <!-- 頁面說明區開始 -->
+            <p>會員:{{session['user']}}/<a href='/logout'>登出</a></p>
+            <p>會員資料(如為訪客，點按將跳轉登入):<a href='/profile'>點我</a></p>
+        </div> <!-- 頁面說明區結束 -->
+        <div class="product-grid"> <!-- 商品卡片容器開始 -->
+            {% for product in products %} <!-- 使用主系統原本的 products 逐筆顯示商品 -->
+            <div class="product-card" onclick="goDetail({{ product.id }})"> <!-- 保留前往商品詳情頁的主系統流程 -->
+                <div class="product-img-wrapper"> <!-- 商品圖片外框開始 -->
+                    <img src="{{ url_for('static', filename='image/' + product.image_filename) }}" alt="{{ product.name }}" onerror="this.src='{{ url_for('static', filename='images/default.jpg') }}'"> <!-- 使用主系統商品圖片欄位顯示圖片 -->
+                </div> <!-- 商品圖片外框結束 -->
+                <div class="product-detail"> <!-- 商品文字資訊區開始 -->
+                    <div class="product-name">{{ product.name }}</div> <!-- 顯示商品名稱 -->
+                    <div class="product-desc">{{ product.description }}</div> <!-- 顯示商品說明 -->
+                    <div class="product-price">基本價格：${{ product.base_price }}</div> <!-- 顯示商品基本價格 -->
+                </div> <!-- 商品文字資訊區結束 -->
+            </div> <!-- 單一商品卡片結束 -->
+            {% endfor %} <!-- 商品迴圈結束 -->
+        </div> <!-- 商品卡片容器結束 -->
+        <div class="footer-actions"> <!-- 底部固定操作列開始 -->
+            <div class="footer-text">點選商品卡片查看詳情<br>可從這裡前往購物車與訂單查詢</div> <!-- 顯示底部說明文字 -->
+            <div class="footer-btn-group"> <!-- 底部按鈕群組開始 -->
+                <button class="footer-btn cart-btn" onclick="goCart()">查看購物車</button> <!-- 保留前往購物車的主系統流程 -->
+                <button class="footer-btn orders-btn" onclick="goOrders()">訂單查詢</button> <!-- 保留前往訂單查詢的主系統流程 -->
+            </div> <!-- 底部按鈕群組結束 -->
+        </div> <!-- 底部固定操作列結束 -->
+    </div> <!-- 手機版主要容器結束 -->
+    
+    {% if msg %}
+    <script>alert({{msg|tojson}});</script>
+    {% endif %}
+    
+    <script> // JavaScript 區塊開始
+        function getCartCode() { // 這個函式負責取得目前瀏覽器的購物車代號
+            let cartCode = localStorage.getItem("cart_code"); // 從 localStorage 讀取 cart_code
+            if (!cartCode) { // 如果目前還沒有 cart_code
+                cartCode = "cart_" + new Date().getTime(); // 使用目前時間建立一個簡單購物車代號
+                localStorage.setItem("cart_code", cartCode); // 把新的 cart_code 存進 localStorage
+            } // 判斷是否已有 cart_code 結束
+            return cartCode; // 回傳 cart_code
+        } // getCartCode 函式結束
+        function goDetail(productId) { // 這個函式負責前往商品詳情頁
+            getCartCode(); // 先確保購物車代號已經存在
+            window.location.href = "/product/" + productId; // 跳到指定商品詳情頁
+        } // goDetail 函式結束
+        function goCart() { // 這個函式負責前往購物車
+            getCartCode(); // 先確保購物車代號已經存在
+            window.location.href = "/cart"; // 跳到購物車頁
+        } // goCart 函式結束
+        function goOrders() { // 這個函式負責前往訂單查詢頁
+            window.location.href = "/order_list"; // 跳到訂單查詢頁
+        } // goOrders 函式結束
+    </script> <!-- JavaScript 區塊結束 -->
+</body> <!-- body 區塊結束 -->
+</html> <!-- HTML 文件結束 -->

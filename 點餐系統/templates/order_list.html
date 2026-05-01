@@ -1,0 +1,351 @@
+<!DOCTYPE html> <!-- 告訴瀏覽器這是一份 HTML5 文件 -->
+<html lang="zh-Hant"> <!-- 設定頁面語言為繁體中文 -->
+<head> <!-- head 區塊開始 -->
+    <meta charset="UTF-8"> <!-- 設定文字編碼，避免中文亂碼 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- 讓手機畫面可以正常縮放 -->
+    <title>訂單查詢頁</title> <!-- 設定瀏覽器分頁標題 -->
+    <style> /* CSS 區塊開始 */
+        body { /* 設定整個頁面的基本樣式 */
+            font-family: Arial, "Microsoft JhengHei", sans-serif; /* 設定中文字體與備用字體 */
+            background: linear-gradient(180deg, #fff3e0 0%, #f6efe6 38%, #f4f4f4 100%); /* 套用統一的暖色漸層背景 */
+            margin: 0; /* 清除瀏覽器預設外距 */
+            padding: 0; /* 清除瀏覽器預設內距 */
+            color: #2f2a25; /* 設定整體文字顏色 */
+        } /* body 樣式結束 */
+        .page-shell { /* 設定頁面主外框 */
+            width: min(92%, 1100px); /* 限制頁面最大寬度 */
+            margin: 24px auto 36px auto; /* 讓頁面置中並留上下距離 */
+        } /* page-shell 樣式結束 */
+        .hero { /* 設定上方主視覺區 */
+            position: relative; /* 讓裝飾圖層可以定位 */
+            overflow: hidden; /* 隱藏超出區塊的裝飾 */
+            border-radius: 24px; /* 設定大圓角 */
+            background: linear-gradient(135deg, rgba(78, 52, 46, 0.95), rgba(251, 140, 0, 0.88)); /* 使用深咖啡橘色漸層 */
+            min-height: 220px; /* 設定主視覺最小高度 */
+            box-shadow: 0 20px 40px rgba(88, 55, 24, 0.18); /* 設定大面積陰影 */
+            display: grid; /* 使用 grid 排版 */
+            grid-template-columns: minmax(0, 1.2fr) minmax(220px, 0.8fr); /* 讓文字與裝飾圖左右分欄 */
+        } /* hero 樣式結束 */
+        .hero-content { /* 設定主視覺文字區 */
+            padding: 28px 28px 30px 28px; /* 設定內距 */
+            color: #fff9f2; /* 使用暖白色文字 */
+            position: relative; /* 讓文字位於上層 */
+            z-index: 2; /* 提高層級 */
+        } /* hero-content 樣式結束 */
+        .hero-label { /* 設定小標籤 */
+            display: inline-block; /* 讓標籤依內容寬度顯示 */
+            padding: 7px 12px; /* 設定標籤內距 */
+            border-radius: 999px; /* 做成膠囊 */
+            background-color: rgba(255, 249, 242, 0.18); /* 使用半透明白底 */
+            font-size: 12px; /* 標籤字體大小 */
+            letter-spacing: 0.08em; /* 拉開字距 */
+            margin-bottom: 14px; /* 與下方內容保持距離 */
+        } /* hero-label 樣式結束 */
+        .hero h1 { /* 設定主標題 */
+            margin: 0 0 10px 0; /* 設定標題外距 */
+            font-size: clamp(28px, 4vw, 42px); /* 依螢幕寬度調整標題大小 */
+            line-height: 1.15; /* 設定行高 */
+        } /* hero h1 樣式結束 */
+        .hero p { /* 設定主視覺說明文字 */
+            margin: 0; /* 清除段落外距 */
+            max-width: 560px; /* 限制文字寬度 */
+            line-height: 1.7; /* 提高可讀性 */
+            color: rgba(255, 249, 242, 0.88); /* 使用半透明暖白色 */
+        } /* hero p 樣式結束 */
+        .hero-art { /* 設定右側裝飾圖區 */
+            position: relative; /* 讓背景圖層可定位 */
+            min-height: 220px; /* 與主視覺等高 */
+            background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(0, 0, 0, 0.22)), url("{{ url_for('static', filename='images/TunaToast.jpg') }}"); /* 使用現有圖片做視覺裝飾 */
+            background-size: cover; /* 讓背景圖填滿 */
+            background-position: center; /* 讓背景圖置中 */
+        } /* hero-art 樣式結束 */
+        .hero-art::before { /* 設定額外暖色遮罩 */
+            content: ""; /* 建立裝飾元素 */
+            position: absolute; /* 使用絕對定位 */
+            inset: 0; /* 讓遮罩撐滿 */
+            background: radial-gradient(circle at 30% 30%, rgba(255, 229, 190, 0.28), transparent 52%); /* 增加暖色氣氛 */
+        } /* hero-art::before 樣式結束 */
+        .panel { /* 設定共用白色面板 */
+            background-color: rgba(255, 255, 255, 0.96); /* 使用接近白色背景 */
+            border-radius: 24px; /* 設定大圓角 */
+            padding: 22px; /* 設定面板內距 */
+            box-shadow: 0 16px 34px rgba(80, 61, 41, 0.08); /* 設定柔和陰影 */
+            margin-top: 22px; /* 與上方主視覺保持距離 */
+        } /* panel 樣式結束 */
+        .panel-header { /* 設定主內容上方標題區 */
+            display: flex; /* 使用 flex 排版 */
+            justify-content: space-between; /* 左右內容分開 */
+            align-items: flex-end; /* 讓底部對齊 */
+            gap: 16px; /* 區塊間距 */
+            margin-bottom: 18px; /* 與下方保持距離 */
+        } /* panel-header 樣式結束 */
+        .panel-header h2 { /* 設定內容區標題 */
+            margin: 0 0 8px 0; /* 設定外距 */
+            font-size: 28px; /* 標題字體大小 */
+            color: #4a2f1d; /* 使用深咖啡色 */
+        } /* panel-header h2 樣式結束 */
+        .top-text { /* 設定上方說明文字 */
+            color: #776a5b; /* 使用柔和灰褐色 */
+            margin: 0; /* 清除外距 */
+            line-height: 1.7; /* 提高可讀性 */
+        } /* top-text 樣式結束 */
+        .summary-box { /* 設定上方總結區 */
+            display: grid; /* 使用 grid 排版 */
+            grid-template-columns: repeat(2, minmax(0, 1fr)); /* 一列兩欄 */
+            gap: 14px; /* 卡片間距 */
+            margin-bottom: 22px; /* 與下方區塊留距離 */
+        } /* summary-box 樣式結束 */
+        .summary-row { /* 設定總結區每一格 */
+            display: flex; /* 使用 flex 排版 */
+            justify-content: space-between; /* 左右分開 */
+            align-items: center; /* 垂直置中 */
+            gap: 10px; /* 內容間距 */
+            padding: 16px 18px; /* 設定內距 */
+            border-radius: 18px; /* 設定圓角 */
+            background: linear-gradient(180deg, #fffaf5, #ffffff); /* 使用暖白色卡片底 */
+            border: 1px solid #f0e1d1; /* 加上淡邊框 */
+            box-shadow: 0 8px 18px rgba(120, 87, 54, 0.05); /* 設定柔和陰影 */
+            color: #6f6258; /* 設定卡片文字顏色 */
+        } /* summary-row 樣式結束 */
+        .summary-row span:last-child { /* 設定總結區右側數值 */
+            font-weight: bold; /* 右側數值加粗 */
+            color: #3f2a1f; /* 使用深褐色 */
+            text-align: right; /* 文字靠右 */
+        } /* summary-row span:last-child 樣式結束 */
+        .orders-grid { /* 設定訂單卡片區排版 */
+            display: grid; /* 使用 grid 排版 */
+            gap: 18px; /* 卡片間距 */
+        } /* orders-grid 樣式結束 */
+        .order-card { /* 設定每一張訂單卡片 */
+            background: linear-gradient(180deg, #fffaf5, #ffffff); /* 使用暖白色卡片底 */
+            border: 1px solid #f0dfcf; /* 訂單卡片加淡邊框 */
+            border-radius: 22px; /* 訂單卡片做大圓角 */
+            padding: 18px; /* 訂單卡片內距 */
+            box-shadow: 0 12px 24px rgba(120, 87, 54, 0.06); /* 加上柔和陰影 */
+        } /* order-card 樣式結束 */
+        .order-top { /* 設定訂單卡片上方區塊 */
+            display: flex; /* 使用 flex 排版 */
+            justify-content: space-between; /* 左右內容分開 */
+            gap: 16px; /* 內容間距 */
+            margin-bottom: 14px; /* 與下方資訊區保持距離 */
+            align-items: flex-start; /* 頂端對齊 */
+        } /* order-top 樣式結束 */
+        .order-title { /* 設定訂單編號標題 */
+            font-size: 22px; /* 訂單標題字體放大 */
+            font-weight: bold; /* 訂單標題加粗 */
+            color: #3f2a1f; /* 使用深褐色 */
+            margin: 0 0 6px 0; /* 設定外距 */
+        } /* order-title 樣式結束 */
+        .order-time { /* 設定訂單建立時間 */
+            color: #8a7e72; /* 使用灰褐色 */
+            font-size: 14px; /* 設定字體大小 */
+        } /* order-time 樣式結束 */
+        .order-status { /* 設定訂單狀態標籤 */
+            display: inline-flex; /* 讓內容置中 */
+            align-items: center; /* 垂直置中 */
+            padding: 8px 14px; /* 設定內距 */
+            border-radius: 999px; /* 做成膠囊 */
+            background-color: #ffe7d6; /* 設定暖橘色背景 */
+            color: #b45b18; /* 設定標籤文字顏色 */
+            font-size: 13px; /* 字體大小 */
+            font-weight: bold; /* 文字加粗 */
+            white-space: nowrap; /* 避免標籤換行 */
+        } /* order-status 樣式結束 */
+        .order-info-grid { /* 設定訂單資訊區排版 */
+            display: grid; /* 使用 grid 排版 */
+            grid-template-columns: repeat(2, minmax(0, 1fr)); /* 一列兩欄 */
+            gap: 12px; /* 卡片間距 */
+            margin-bottom: 16px; /* 與明細區保持距離 */
+        } /* order-info-grid 樣式結束 */
+        .order-info { /* 設定訂單主資訊文字 */
+            background-color: #ffffff; /* 使用白底小卡 */
+            border: 1px solid #f0e1d1; /* 設定淡邊框 */
+            border-radius: 16px; /* 設定圓角 */
+            padding: 12px 14px; /* 設定內距 */
+            color: #5f554d; /* 使用灰褐色文字 */
+            line-height: 1.6; /* 提高可讀性 */
+        } /* order-info 樣式結束 */
+        .item-title { /* 設定商品明細小標題 */
+            font-size: 19px; /* 商品明細標題字體大小 */
+            font-weight: bold; /* 商品明細標題加粗 */
+            margin: 0 0 12px 0; /* 與下方明細保持距離 */
+            color: #4a2f1d; /* 使用深咖啡色 */
+        } /* item-title 樣式結束 */
+        .items-shell { /* 設定商品明細區外框 */
+            background-color: #fffdfb; /* 使用淡底色 */
+            border: 1px solid #f0e1d1; /* 加上淡邊框 */
+            border-radius: 18px; /* 設定圓角 */
+            padding: 14px; /* 設定內距 */
+        } /* items-shell 樣式結束 */
+        .item-box { /* 設定每一筆商品明細外框 */
+            background-color: #ffffff; /* 明細卡片白底 */
+            border: 1px solid #f0dfcf; /* 設定邊框 */
+            border-radius: 16px; /* 設定圓角 */
+            padding: 14px; /* 設定內距 */
+            margin-bottom: 12px; /* 與下一筆明細保持距離 */
+            box-shadow: 0 8px 18px rgba(120, 87, 54, 0.04); /* 加上淡陰影 */
+        } /* item-box 樣式結束 */
+        .item-box:last-child { /* 設定最後一筆明細 */
+            margin-bottom: 0; /* 最後一筆不留底部距離 */
+        } /* item-box:last-child 樣式結束 */
+        .item-name { /* 設定商品名稱 */
+            font-size: 17px; /* 商品名稱字體大小 */
+            font-weight: bold; /* 商品名稱加粗 */
+            margin-bottom: 6px; /* 商品名稱下方留距離 */
+            color: #3f2a1f; /* 使用深褐色 */
+        } /* item-name 樣式結束 */
+        .item-text { /* 設定商品細節文字 */
+            color: #6e6257; /* 商品細節使用灰褐色 */
+            margin-bottom: 4px; /* 商品細節下方留距離 */
+            line-height: 1.6; /* 提高可讀性 */
+        } /* item-text 樣式結束 */
+        .empty { /* 設定沒有訂單時的提示 */
+            text-align: center; /* 文字置中 */
+            color: #8a7f74; /* 文字使用灰色 */
+            padding: 34px 16px; /* 上下留距離 */
+            background-color: #fffdfb; /* 給空狀態一個淡背景 */
+            border: 1px dashed #dfc8af; /* 加上虛線框 */
+            border-radius: 16px; /* 設定圓角 */
+        } /* empty 樣式結束 */
+        .btn-area { /* 設定下方按鈕區 */
+            display: flex; /* 使用 flex 排版 */
+            justify-content: space-between; /* 左右按鈕分開 */
+            gap: 12px; /* 按鈕中間留距離 */
+            margin-top: 24px; /* 按鈕區上方留距離 */
+        } /* btn-area 樣式結束 */
+        .btn { /* 設定共用按鈕 */
+            flex: 1; /* 讓按鈕平均寬度 */
+            padding: 14px 18px; /* 按鈕內距 */
+            border: none; /* 移除按鈕邊框 */
+            border-radius: 16px; /* 按鈕做圓角 */
+            color: white; /* 按鈕文字設白色 */
+            cursor: pointer; /* 滑鼠移上去顯示手指 */
+            font-size: 15px; /* 設定字體大小 */
+            font-weight: bold; /* 按鈕文字加粗 */
+        } /* btn 樣式結束 */
+        .product-btn { /* 設定回商品頁按鈕 */
+            background: linear-gradient(135deg, #607d8b, #455a64); /* 回商品頁按鈕使用藍灰色漸層 */
+        } /* product-btn 樣式結束 */
+        .json-btn { /* 設定查看 JSON 按鈕 */
+            background: linear-gradient(135deg, #8d6e63, #6d4c41); /* JSON 按鈕使用棕色漸層 */
+        } /* json-btn 樣式結束 */
+        .admin-btn { /* 設定店家後台按鈕 */
+            background: linear-gradient(135deg, #ff8a65, #f4511e); /* 店家後台按鈕使用橘色漸層 */
+        } /* admin-btn 樣式結束 */
+        @media (max-width: 860px) { /* 平板以下調整 */
+            .hero { /* 調整主視覺區版型 */
+                grid-template-columns: 1fr; /* 改成單欄顯示 */
+            } /* hero 響應式樣式結束 */
+            .hero-art { /* 調整裝飾圖高度 */
+                min-height: 180px; /* 縮小高度 */
+            } /* hero-art 響應式樣式結束 */
+            .summary-box { /* 調整總結區排版 */
+                grid-template-columns: 1fr; /* 改成單欄 */
+            } /* summary-box 響應式樣式結束 */
+            .order-info-grid { /* 調整訂單資訊排版 */
+                grid-template-columns: 1fr; /* 改成單欄 */
+            } /* order-info-grid 響應式樣式結束 */
+        } /* 平板響應式結束 */
+        @media (max-width: 560px) { /* 手機版調整 */
+            .page-shell { /* 調整整體外距 */
+                width: calc(100% - 20px); /* 縮小左右外距 */
+                margin: 10px auto 20px auto; /* 調整上下距離 */
+            } /* page-shell 響應式樣式結束 */
+            .hero-content { /* 調整主視覺文字區 */
+                padding: 22px 18px 24px 18px; /* 縮小內距 */
+            } /* hero-content 響應式樣式結束 */
+            .panel { /* 調整卡片內距 */
+                padding: 16px; /* 縮小面板內距 */
+            } /* panel 響應式樣式結束 */
+            .panel-header { /* 調整標題區排版 */
+                flex-direction: column; /* 改成上下排列 */
+                align-items: flex-start; /* 左對齊 */
+            } /* panel-header 響應式樣式結束 */
+            .order-top { /* 調整訂單卡片上方排版 */
+                flex-direction: column; /* 改成上下排列 */
+            } /* order-top 響應式樣式結束 */
+            .btn-area { /* 調整按鈕排列 */
+                flex-direction: column; /* 改成上下排列 */
+            } /* btn-area 響應式樣式結束 */
+        } /* 手機響應式結束 */
+    </style> <!-- CSS 區塊結束 -->
+</head> <!-- head 區塊結束 -->
+<body> <!-- body 區塊開始 -->
+    <div class="page-shell"> <!-- 頁面主外框開始 -->
+        <div class="hero"> <!-- 上方主視覺區開始 -->
+            <div class="hero-content"> <!-- 主視覺文字區開始 -->
+                <div class="hero-label">ORDER HISTORY</div> <!-- 顯示小標籤 -->
+                <h1>訂單查詢與訂單紀錄</h1> <!-- 顯示主標題 -->
+                <p>會員:{{session['user']}}/<a href='/logout'>登出</a></p>
+                <p>會員資料(如為訪客，點按將跳轉登入):<a href='/profile'>點我</a></p>
+            </div> <!-- 主視覺文字區結束 -->
+            <div class="hero-art"></div> <!-- 主視覺右側裝飾圖結束 -->
+        </div> <!-- 上方主視覺區結束 -->
+        <div class="panel"> <!-- 主內容面板開始 -->
+            <div class="panel-header"> <!-- 主內容上方標題區開始 -->
+                <div> <!-- 左側標題與說明開始 -->
+                    <h2>訂單查詢頁</h2> <!-- 頁面主標題 -->
+                    <p class="top-text">這一頁保留給顧客或展示用，店家要改狀態請進後台。</p> <!-- 頁面說明文字 -->
+                </div> <!-- 左側標題與說明結束 -->
+            </div> <!-- 主內容上方標題區結束 -->
+            <div class="summary-box"> <!-- 上方總結區開始 -->
+                <div class="summary-row"><span>目前訂單總數</span><span>{{ orders|length }}</span></div> <!-- 顯示目前訂單總數 -->
+                <div class="summary-row"><span>資料來源</span><span>second_group_order.db</span></div> <!-- 顯示資料來源 -->
+            </div> <!-- 上方總結區結束 -->
+            {% if orders|length == 0 %} <!-- 如果目前沒有任何訂單 -->
+            <div class="empty">目前沒有訂單資料</div> <!-- 顯示沒有訂單提示 -->
+            {% else %} <!-- 如果目前有訂單 -->
+                <div class="orders-grid"> <!-- 訂單卡片區開始 -->
+                {% for order in orders %} <!-- 逐一顯示每張訂單 -->
+                <div class="order-card"> <!-- 單一訂單卡片開始 -->
+                    <div class="order-top"> <!-- 訂單卡片上方區塊開始 -->
+                        <div> <!-- 左側訂單標題資訊開始 -->
+                            <div class="order-title">訂單編號：{{ order.id }}</div> <!-- 顯示訂單編號 -->
+                            <div class="order-time">建立時間：{{ order.created_at }}</div> <!-- 顯示訂單建立時間 -->
+                        </div> <!-- 左側訂單標題資訊結束 -->
+                        <div class="order-status">{{ order.status_text }}</div> <!-- 顯示中文訂單狀態 -->
+                    </div> <!-- 訂單卡片上方區塊結束 -->
+                    <div class="order-info-grid"> <!-- 訂單資訊區開始 -->
+                        <div class="order-info">顧客姓名：{{ order.customer_name }}</div> <!-- 顯示顧客姓名 -->
+                        <div class="order-info">電話：{{ order.phone }}</div> <!-- 顯示顧客電話 -->
+                        <div class="order-info">取餐時間：{{ order.pickup_time }}</div> <!-- 顯示取餐時間 -->
+                        <div class="order-info">訂單備註：{{ order.note if order.note else "無" }}</div> <!-- 顯示訂單備註 -->
+                        <div class="order-info">商品筆數：{{ order.item_count }}</div> <!-- 顯示商品筆數 -->
+                        <div class="order-info">訂單總金額：${{ order.total_amount }}</div> <!-- 顯示訂單總金額 -->
+                    </div> <!-- 訂單資訊區結束 -->
+                    <div class="item-title">商品明細</div> <!-- 商品明細小標題 -->
+                    <div class="items-shell"> <!-- 商品明細區外框開始 -->
+                        {% for item in order["items"] %} <!-- 逐一顯示訂單內的商品明細 -->
+                        <div class="item-box"> <!-- 單一商品明細開始 -->
+                            <div class="item-name">{{ item.product_name }}</div> <!-- 顯示商品名稱 -->
+                            <div class="item-text">單價：${{ item.price }}</div> <!-- 顯示商品單價 -->
+                            <div class="item-text">數量：{{ item.quantity }}</div> <!-- 顯示商品數量 -->
+                            <div class="item-text">客製化：{{ item.options }}</div> <!-- 顯示商品選項 -->
+                            <div class="item-text">小計：${{ item.subtotal }}</div> <!-- 顯示商品小計 -->
+                        </div> <!-- 單一商品明細結束 -->
+                        {% endfor %} <!-- 商品明細迴圈結束 -->
+                    </div> <!-- 商品明細區外框結束 -->
+                </div> <!-- 單一訂單卡片結束 -->
+                {% endfor %} <!-- 訂單迴圈結束 -->
+                </div> <!-- 訂單卡片區結束 -->
+            {% endif %} <!-- 是否有訂單判斷結束 -->
+            <div class="btn-area"> <!-- 下方按鈕區開始 -->
+                <button class="btn product-btn" onclick="goProduct()">回商品頁</button> <!-- 回商品頁按鈕 -->
+                <button class="btn json-btn" onclick="goJson()">查看 JSON</button> <!-- 查看 JSON 按鈕 -->
+                <button class="btn admin-btn" onclick="goAdmin()">店家後台</button> <!-- 店家後台按鈕 -->
+            </div> <!-- 下方按鈕區結束 -->
+        </div> <!-- 主內容面板結束 -->
+    </div> <!-- 頁面主外框結束 -->
+    <script> // JavaScript 區塊開始
+        function goProduct() { // 這個函式負責回商品列表頁
+            window.location.href = "/products"; // 跳到商品列表路由
+        } // goProduct 函式結束
+        function goJson() { // 這個函式負責查看訂單 JSON
+            window.location.href = "/orders"; // 跳到訂單 JSON 路由
+        } // goJson 函式結束
+        function goAdmin() { // 這個函式負責前往店家後台
+            window.location.href = "/admin/orders"; // 跳到店家後台路由
+        } // goAdmin 函式結束
+    </script> <!-- JavaScript 區塊結束 -->
+</body> <!-- body 區塊結束 -->
+</html> <!-- HTML 文件結束 -->
