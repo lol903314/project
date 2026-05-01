@@ -1,0 +1,252 @@
+<!DOCTYPE html> <!-- 告訴瀏覽器這是一份 HTML5 文件 -->
+<html lang="zh-Hant"> <!-- 設定頁面語言為繁體中文 -->
+<head> <!-- head 區塊開始 -->
+    <meta charset="UTF-8"> <!-- 設定文字編碼，避免中文亂碼 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- 讓手機畫面可以正常縮放 -->
+    <title>購物車</title> <!-- 設定瀏覽器分頁標題 -->
+    <style> /* CSS 區塊開始 */
+        body { /* 設定整個頁面的基本樣式 */
+            font-family: Arial, "Microsoft JhengHei", sans-serif; /* 設定中文字體與備用字體 */
+            background-color: #f6f3ee; /* 設定頁面背景色 */
+            margin: 0; /* 清除瀏覽器預設外距 */
+            padding: 0; /* 清除瀏覽器預設內距 */
+        } /* body 樣式結束 */
+        .box { /* 設定主要白色內容框 */
+            width: 90%; /* 寬度使用螢幕 90% */
+            max-width: 850px; /* 最大寬度限制在 850px */
+            margin: 30px auto; /* 上下留 30px，左右自動置中 */
+            background-color: white; /* 內容框背景設白色 */
+            padding: 20px; /* 內容框內距 */
+            border-radius: 10px; /* 內容框做圓角 */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.08); /* 加上淡淡陰影 */
+        } /* box 樣式結束 */
+        h1 { /* 設定主標題樣式 */
+            text-align: center; /* 標題置中 */
+            margin-bottom: 20px; /* 標題下方留距離 */
+        } /* h1 樣式結束 */
+        .tip { /* 設定提示文字樣式 */
+            color: #666; /* 提示文字使用灰色 */
+            margin-bottom: 15px; /* 提示文字下方留距離 */
+        } /* tip 樣式結束 */
+        .item { /* 設定每一筆購物車商品外框 */
+            border-bottom: 1px solid #eee; /* 商品底部加分隔線 */
+            padding: 15px 0; /* 商品上下留距離 */
+        } /* item 樣式結束 */
+        .name { /* 設定商品名稱樣式 */
+            font-size: 18px; /* 商品名稱字體放大 */
+            font-weight: bold; /* 商品名稱加粗 */
+            margin-bottom: 6px; /* 商品名稱下方留距離 */
+        } /* name 樣式結束 */
+        .text { /* 設定商品細節文字樣式 */
+            color: #666; /* 細節文字使用灰色 */
+            margin-bottom: 4px; /* 細節文字下方留一點距離 */
+        } /* text 樣式結束 */
+        .btn-line { /* 設定每筆商品的小按鈕區 */
+            margin-top: 8px; /* 小按鈕區上方留距離 */
+        } /* btn-line 樣式結束 */
+        .small-btn { /* 設定小按鈕共用樣式 */
+            padding: 6px 12px; /* 小按鈕內距 */
+            border: none; /* 移除小按鈕邊框 */
+            border-radius: 5px; /* 小按鈕做圓角 */
+            color: white; /* 小按鈕文字設白色 */
+            cursor: pointer; /* 滑鼠移上去顯示手指 */
+            margin-right: 6px; /* 小按鈕右邊留距離 */
+        } /* small-btn 樣式結束 */
+        .plus-btn { /* 設定加號按鈕 */
+            background-color: #2ecc71; /* 加號按鈕使用綠色 */
+        } /* plus-btn 樣式結束 */
+        .minus-btn { /* 設定減號按鈕 */
+            background-color: #f39c12; /* 減號按鈕使用橘色 */
+        } /* minus-btn 樣式結束 */
+        .delete-btn { /* 設定刪除按鈕 */
+            background-color: #e74c3c; /* 刪除按鈕使用紅色 */
+        } /* delete-btn 樣式結束 */
+        .summary { /* 設定下方總結區 */
+            margin-top: 20px; /* 總結區上方留距離 */
+            padding-top: 15px; /* 總結區上方留內距 */
+            border-top: 1px solid #ddd; /* 總結區上方加線 */
+        } /* summary 樣式結束 */
+        .btn-area { /* 設定下方主要按鈕區 */
+            display: flex; /* 使用 flex 排版 */
+            justify-content: space-between; /* 左右按鈕分開 */
+            gap: 10px; /* 按鈕中間留距離 */
+            margin-top: 20px; /* 按鈕區上方留距離 */
+        } /* btn-area 樣式結束 */
+        .btn { /* 設定大按鈕共用樣式 */
+            flex: 1; /* 讓兩個大按鈕平均寬度 */
+            padding: 12px 18px; /* 大按鈕內距 */
+            border: none; /* 移除大按鈕邊框 */
+            border-radius: 6px; /* 大按鈕做圓角 */
+            color: white; /* 大按鈕文字設白色 */
+            cursor: pointer; /* 滑鼠移上去顯示手指 */
+        } /* btn 樣式結束 */
+        .back-btn { /* 設定繼續購物按鈕 */
+            background-color: #3498db; /* 繼續購物按鈕使用藍色 */
+        } /* back-btn 樣式結束 */
+        .checkout-btn { /* 設定前往結帳按鈕 */
+            background-color: #2ecc71; /* 前往結帳按鈕使用綠色 */
+        } /* checkout-btn 樣式結束 */
+        .empty { /* 設定空購物車提示 */
+            text-align: center; /* 文字置中 */
+            color: #888; /* 文字使用灰色 */
+            padding: 30px 0; /* 上下留距離 */
+        } /* empty 樣式結束 */
+    </style> <!-- CSS 區塊結束 -->
+</head> <!-- head 區塊結束 -->
+<body> <!-- body 區塊開始 -->
+    <div class="box"> <!-- 主要白色內容框開始 -->
+        <h1>我的購物車</h1> <!-- 頁面主標題 -->
+        <div class="tip">這裡可以調整數量，確認沒問題之後再去結帳。</div> <!-- 頁面說明文字 -->
+        <div id="cart-list"></div> <!-- 購物車商品清單容器 -->
+        <div class="summary"> <!-- 購物車總結區開始 -->
+            <div>商品項數：<span id="item-count">0</span></div> <!-- 顯示購物車列數 -->
+            <div>商品總數量：<span id="total-quantity">0</span></div> <!-- 顯示商品總數量 -->
+            <div>總金額：$<span id="total-price">0</span></div> <!-- 顯示購物車總金額 -->
+        </div> <!-- 購物車總結區結束 -->
+        <div class="btn-area"> <!-- 下方按鈕區開始 -->
+            <button class="btn back-btn" onclick="goBack()">繼續購物</button> <!-- 回商品列表按鈕 -->
+            <button class="btn checkout-btn" onclick="goCheckout()">前往結帳</button> <!-- 前往結帳按鈕 -->
+        </div> <!-- 下方按鈕區結束 -->
+    </div> <!-- 主要白色內容框結束 -->
+    <script> // JavaScript 區塊開始
+        let cartCode = ""; // 建立變數保存目前瀏覽器的 cart_code
+        let cartData = []; // 建立陣列保存後端回傳的購物車資料
+        function getCartCode() { // 這個函式負責取得目前瀏覽器的購物車代號
+            let code = localStorage.getItem("cart_code"); // 從 localStorage 讀取 cart_code
+            if (!code) { // 如果目前沒有 cart_code
+                code = "cart_" + new Date().getTime(); // 使用目前時間建立新 cart_code
+                localStorage.setItem("cart_code", code); // 把新 cart_code 存回 localStorage
+            } // cart_code 檢查結束
+            return code; // 回傳 cart_code
+        } // getCartCode 函式結束
+        async function loadCartData() { // 這個函式負責從後端讀取購物車資料
+            cartCode = getCartCode(); // 先取得目前瀏覽器的 cart_code
+            try { // 開始呼叫後端 API
+                let response = await fetch("/get_cart_items?cart_code=" + encodeURIComponent(cartCode)); // 呼叫讀取購物車 API
+                let result = await response.json(); // 把後端回應轉成 JSON 物件
+                if (result.success) { // 如果後端回傳成功
+                    cartData = result.items; // 把購物車商品存進 cartData
+                    renderCart(result.count, result.total_quantity, result.total_amount); // 將購物車資料畫到畫面上
+                } else { // 如果後端回傳失敗
+                    alert("讀取購物車失敗：" + result.message); // 顯示後端錯誤訊息
+                } // 成功失敗判斷結束
+            } catch (error) { // 如果網路或後端連線發生錯誤
+                alert("讀取購物車失敗，請確認 Flask 是否有啟動"); // 顯示連線錯誤提示
+                console.log(error); // 把錯誤印到 console 方便除錯
+            } // try catch 結束
+        } // loadCartData 函式結束
+        function appendTextBlock(parent, className, text) { // 這個函式負責安全建立一段文字區塊
+            let div = document.createElement("div"); // 建立 div 元素
+            div.className = className; // 設定 div 的 class 名稱
+            div.textContent = text; // 使用 textContent 放文字，避免使用者內容被當成 HTML
+            parent.appendChild(div); // 把 div 放進父層容器
+        } // appendTextBlock 函式結束
+        function renderCart(count, totalQuantity, totalAmount) { // 這個函式負責把購物車資料顯示在頁面上
+            let list = document.getElementById("cart-list"); // 找到購物車清單容器
+            list.textContent = ""; // 清空舊內容，使用 textContent 避免 HTML 注入
+            if (cartData.length === 0) { // 如果購物車沒有任何商品
+                let empty = document.createElement("div"); // 建立空狀態 div
+                empty.className = "empty"; // 設定空狀態 class
+                empty.textContent = "購物車目前是空的"; // 設定空狀態文字
+                list.appendChild(empty); // 把空狀態放到清單容器
+                document.getElementById("item-count").textContent = "0"; // 商品項數顯示 0
+                document.getElementById("total-quantity").textContent = "0"; // 商品總數量顯示 0
+                document.getElementById("total-price").textContent = "0"; // 總金額顯示 0
+                return; // 結束畫面渲染
+            } // 空購物車判斷結束
+            for (let i = 0; i < cartData.length; i++) { // 逐一顯示每筆購物車商品
+                let item = cartData[i]; // 取出目前這筆商品
+                let itemBox = document.createElement("div"); // 建立商品外框 div
+                itemBox.className = "item"; // 設定商品外框 class
+                appendTextBlock(itemBox, "name", item.product_name); // 顯示商品名稱
+                appendTextBlock(itemBox, "text", "單價：$" + item.price); // 顯示商品單價
+                appendTextBlock(itemBox, "text", "數量：" + item.quantity); // 顯示商品數量
+                appendTextBlock(itemBox, "text", "客製化：" + item.options); // 顯示商品選項文字
+                appendTextBlock(itemBox, "text", "小計：$" + item.subtotal); // 顯示商品小計
+                let btnLine = document.createElement("div"); // 建立商品按鈕列
+                btnLine.className = "btn-line"; // 設定按鈕列 class
+                let plusButton = document.createElement("button"); // 建立加號按鈕
+                plusButton.className = "small-btn plus-btn"; // 設定加號按鈕 class
+                plusButton.textContent = "+"; // 設定加號按鈕文字
+                plusButton.onclick = function () { plusQty(i); }; // 綁定加號按鈕事件
+                btnLine.appendChild(plusButton); // 把加號按鈕放進按鈕列
+                let minusButton = document.createElement("button"); // 建立減號按鈕
+                minusButton.className = "small-btn minus-btn"; // 設定減號按鈕 class
+                minusButton.textContent = "-"; // 設定減號按鈕文字
+                minusButton.onclick = function () { minusQty(i); }; // 綁定減號按鈕事件
+                btnLine.appendChild(minusButton); // 把減號按鈕放進按鈕列
+                let deleteButton = document.createElement("button"); // 建立刪除按鈕
+                deleteButton.className = "small-btn delete-btn"; // 設定刪除按鈕 class
+                deleteButton.textContent = "刪除"; // 設定刪除按鈕文字
+                deleteButton.onclick = function () { deleteItem(i); }; // 綁定刪除按鈕事件
+                btnLine.appendChild(deleteButton); // 把刪除按鈕放進按鈕列
+                itemBox.appendChild(btnLine); // 把按鈕列放進商品外框
+                list.appendChild(itemBox); // 把商品外框放進購物車清單
+            } // 購物車商品迴圈結束
+            document.getElementById("item-count").textContent = count; // 更新商品項數
+            document.getElementById("total-quantity").textContent = totalQuantity; // 更新商品總數量
+            document.getElementById("total-price").textContent = totalAmount; // 更新總金額
+        } // renderCart 函式結束
+        async function updateQuantity(item, newQuantity) { // 這個函式負責呼叫後端更新指定商品數量
+            try { // 開始呼叫後端 API
+                let response = await fetch("/update_cart_item", { // 呼叫更新購物車 API
+                    method: "POST", // 使用 POST 方法送資料
+                    headers: { "Content-Type": "application/json" }, // 告訴後端這次送 JSON
+                    body: JSON.stringify({ item_id: item.id, new_quantity: newQuantity }) // 送出商品 id 與新數量
+                }); // fetch 呼叫結束
+                let result = await response.json(); // 把後端回應轉成 JSON
+                if (result.success) { // 如果後端更新成功
+                    loadCartData(); // 重新讀取購物車資料
+                } else { // 如果後端更新失敗
+                    alert("更新失敗：" + result.message); // 顯示後端錯誤訊息
+                } // 成功失敗判斷結束
+            } catch (error) { // 如果網路或後端連線發生錯誤
+                alert("更新數量失敗"); // 顯示錯誤提示
+                console.log(error); // 把錯誤印到 console 方便除錯
+            } // try catch 結束
+        } // updateQuantity 函式結束
+        function plusQty(index) { // 這個函式負責把商品數量加 1
+            let item = cartData[index]; // 取出要更新的商品
+            updateQuantity(item, item.quantity + 1); // 呼叫共用更新函式
+        } // plusQty 函式結束
+        function minusQty(index) { // 這個函式負責把商品數量減 1
+            let item = cartData[index]; // 取出要更新的商品
+            updateQuantity(item, item.quantity - 1); // 呼叫共用更新函式，後端會在數量小於等於 0 時刪除
+        } // minusQty 函式結束
+        async function deleteItem(index) { // 這個函式負責刪除指定商品
+            let item = cartData[index]; // 取出要刪除的商品
+            let ok = confirm("確定要刪除這個商品嗎？"); // 刪除前先確認
+            if (!ok) { // 如果使用者取消
+                return; // 直接結束函式
+            } // 確認刪除判斷結束
+            try { // 開始呼叫後端 API
+                let response = await fetch("/delete_cart_item", { // 呼叫刪除購物車 API
+                    method: "POST", // 使用 POST 方法送資料
+                    headers: { "Content-Type": "application/json" }, // 告訴後端這次送 JSON
+                    body: JSON.stringify({ item_id: item.id }) // 送出要刪除的商品 id
+                }); // fetch 呼叫結束
+                let result = await response.json(); // 把後端回應轉成 JSON
+                if (result.success) { // 如果後端刪除成功
+                    loadCartData(); // 重新讀取購物車資料
+                } else { // 如果後端刪除失敗
+                    alert("刪除失敗：" + result.message); // 顯示後端錯誤訊息
+                } // 成功失敗判斷結束
+            } catch (error) { // 如果網路或後端連線發生錯誤
+                alert("刪除商品失敗"); // 顯示錯誤提示
+                console.log(error); // 把錯誤印到 console 方便除錯
+            } // try catch 結束
+        } // deleteItem 函式結束
+        function goBack() { // 這個函式負責回商品列表頁
+            window.location.href = "/product"; // 跳到商品列表路由
+        } // goBack 函式結束
+        function goCheckout() { // 這個函式負責前往結帳頁
+            if (cartData.length === 0) { // 如果購物車是空的
+                alert("購物車是空的，請先加入商品"); // 顯示提醒
+                return; // 停止前往結帳
+            } // 空購物車判斷結束
+            window.location.href = "/checkout"; // 跳到結帳頁
+        } // goCheckout 函式結束
+        loadCartData(); // 頁面一載入就讀取購物車資料
+    </script> <!-- JavaScript 區塊結束 -->
+</body> <!-- body 區塊結束 -->
+</html> <!-- HTML 文件結束 -->
