@@ -1,3 +1,4 @@
+import os#heroku
 from flask import Flask,render_template,request,redirect,url_for,session,jsonify,abort
 import random
 from flask_mail import Mail,Message
@@ -410,6 +411,5 @@ def health():
 #------------------------------------------------------------------------------------------------------------------------------------
 
 if __name__ == '__main__':
-    app.run(debug = True,use_reloader=False)
-    
-    
+    port=int(os.environ.get("PORT",5000))#heroku
+    app.run(host="0.0.0.0",port=port)#heroku
